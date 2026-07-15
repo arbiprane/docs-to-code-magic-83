@@ -29,7 +29,7 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          "Explore how AI reshapes work: exposure levels, replacement risk, and recommended actions across 30+ occupations.",
+          "Interactive dashboard mapping AI exposure, replacement risk, and recommended actions across occupations.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
