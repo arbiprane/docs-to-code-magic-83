@@ -12,6 +12,7 @@ import {
 } from "@/components/FilterBar";
 import { JobsDataTable } from "@/components/JobsDataTable";
 import { JobRiskProfileDrawer } from "@/components/JobRiskProfileDrawer";
+import { GoogleSignInButton } from "@/components/GoogleSignInButton";
 
 export const Route = createFileRoute("/")({
   head: () => ({
