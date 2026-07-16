@@ -88,10 +88,10 @@ export function JobRiskProfileDrawer({
             </SheetHeader>
 
             <div className="space-y-6 p-6">
-              <div className="rounded-lg border bg-card p-4">
+              <div className="surface rounded-2xl p-4 ring-1 ring-black/[0.04] dark:ring-white/[0.06]">
                 <div className="mb-2 flex items-center justify-between text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  <span>Analysis Confidence</span>
-                  <span>{job.confidenceScore}/100</span>
+                  <span>Analysis confidence</span>
+                  <span className="tabular-nums text-foreground">{job.confidenceScore}/100</span>
                 </div>
                 <Progress value={job.confidenceScore} className="h-2" />
               </div>

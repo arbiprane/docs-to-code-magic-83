@@ -1,7 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Activity } from "lucide-react";
-import { jobs as allJobs, type JobImpact } from "@/lib/jobs-data";
+import { Download } from "lucide-react";
+import { toast } from "sonner";
+import type { JobImpact } from "@/lib/jobs-data";
+import { useJobs, useDeleteJob } from "@/lib/use-jobs";
+import { exportJobsToCsv } from "@/lib/export-csv";
+import { useAuth } from "@/hooks/use-auth";
 import { SummaryCards } from "@/components/SummaryCards";
 import { ExecutiveInsightPanel } from "@/components/ExecutiveInsightPanel";
 import { DashboardCharts } from "@/components/DashboardCharts";
@@ -13,6 +17,9 @@ import {
 import { JobsDataTable } from "@/components/JobsDataTable";
 import { JobRiskProfileDrawer } from "@/components/JobRiskProfileDrawer";
 import { GoogleSignInButton } from "@/components/GoogleSignInButton";
+import { AddJobDialog } from "@/components/AddJobDialog";
+import { LoginScreen } from "@/components/LoginScreen";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -36,17 +43,34 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: Dashboard,
+  component: RouteComponent,
 });
 
-function Dashboard() {
+function RouteComponent() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <div className="min-h-screen bg-background" />;
+  }
+
+  if (!user) {
+    return <LoginScreen />;
+  }
+
+  return <Dashboard userId={user.id} />;
+}
+
+function Dashboard({ userId }: { userId: string }) {
+  const { data: allJobs = [], isLoading } = useJobs();
+  const deleteJob = useDeleteJob();
+
   const [filters, setFilters] = useState<Filters>(emptyFilters);
   const [selected, setSelected] = useState<JobImpact | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const categories = useMemo(
     () => Array.from(new Set(allJobs.map((j) => j.jobCategory))).sort(),
-    [],
+    [allJobs],
   );
 
   const filtered = useMemo(() => {
@@ -70,7 +94,7 @@ function Dashboard() {
         return false;
       return true;
     });
-  }, [filters]);
+  }, [allJobs, filters]);
 
   const hasFilters =
     filters.search !== "" ||
@@ -81,18 +105,22 @@ function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b bg-card/60 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-5 sm:px-6 lg:px-8">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <Activity className="h-5 w-5" />
-          </div>
-          <div className="flex-1">
-            <h1 className="text-lg font-semibold tracking-tight text-foreground sm:text-xl">
-              AI Job Impact Tracker
+      <header className="relative overflow-hidden border-b border-border/60">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-70 [background:radial-gradient(50%_70%_at_12%_-10%,var(--color-accent)_0%,transparent_65%)]"
+        />
+        <div className="relative mx-auto flex max-w-7xl items-start justify-between gap-4 px-4 py-9 sm:px-6 lg:px-8 lg:py-11">
+          <div>
+            <span className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+              Workforce analytics
+            </span>
+            <h1 className="mt-2 max-w-xl text-3xl font-semibold leading-tight tracking-tight text-foreground sm:text-4xl">
+              AI job impact tracker
             </h1>
-            <p className="text-xs text-muted-foreground sm:text-sm">
-              Workforce analytics: AI exposure, replacement risk, and recommended
-              actions.
+            <p className="mt-3 max-w-lg text-sm text-muted-foreground sm:text-base">
+              Mapping AI exposure, replacement risk, and recommended actions across
+              occupations.
             </p>
           </div>
           <GoogleSignInButton />
@@ -109,15 +137,39 @@ function Dashboard() {
           onChange={setFilters}
           onReset={() => setFilters(emptyFilters)}
         />
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => exportJobsToCsv(filtered)}
+            disabled={filtered.length === 0}
+          >
+            <Download className="h-4 w-4" />
+            Export CSV
+          </Button>
+          <AddJobDialog />
+        </div>
         <JobsDataTable
           data={filtered}
           hasFilters={hasFilters}
           onResetFilters={() => setFilters(emptyFilters)}
+          currentUserId={userId}
           onView={(job) => {
             setSelected(job);
             setDrawerOpen(true);
           }}
+          onDelete={(job) => {
+            deleteJob.mutate(job.id, {
+              onSuccess: () => toast.success("Job deleted"),
+              onError: () => toast.error("Couldn't delete job. Please try again."),
+            });
+          }}
         />
+        {!isLoading && allJobs.length === 0 && (
+          <p className="text-center text-sm text-muted-foreground">
+            No jobs in the dataset yet. Add the first one above.
+          </p>
+        )}
         <footer className="pb-4 pt-2 text-center text-xs text-muted-foreground">
           Rule-based analysis using an ILO/WEF/OECD-inspired taxonomy. Validate
           against your industry context before making workforce decisions.

@@ -44,7 +44,7 @@ export function FilterBar({
     filters.category !== "all";
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-border/60 bg-card p-4 shadow-sm lg:flex-row lg:items-center">
+    <div className="surface flex flex-col gap-3 rounded-2xl p-4 ring-1 ring-black/[0.04] lg:flex-row lg:items-center dark:ring-white/[0.06]">
       <div className="relative flex-1">
         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input

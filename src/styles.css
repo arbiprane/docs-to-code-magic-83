@@ -55,6 +55,9 @@
   --color-risk-low: var(--risk-low);
   --color-risk-low-foreground: var(--risk-low-foreground);
   --color-risk-low-soft: var(--risk-low-soft);
+
+  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SFMono-Regular", monospace;
 }
 
 :root {
@@ -129,8 +132,38 @@
 @layer base {
   * { border-color: var(--color-border); }
   body {
+    position: relative;
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: var(--font-sans);
     font-feature-settings: "cv11", "ss01";
   }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.025;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90' viewBox='0 0 90 90'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  h1, h2, h3 {
+    text-wrap: balance;
+  }
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.surface {
+  background-color: var(--color-card);
+  box-shadow:
+    0 1px 2px -1px oklch(0.28 0.05 260 / 0.06),
+    0 4px 16px -6px oklch(0.28 0.05 260 / 0.08);
+}
+.dark .surface {
+  box-shadow:
+    0 1px 2px -1px oklch(0 0 0 / 0.3),
+    0 4px 20px -6px oklch(0 0 0 / 0.4);
 }

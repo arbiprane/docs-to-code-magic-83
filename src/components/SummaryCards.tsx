@@ -1,5 +1,4 @@
 import type { JobImpact } from "@/lib/jobs-data";
-import { Card, CardContent } from "@/components/ui/card";
 import { Briefcase, ShieldAlert, ShieldQuestion, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -41,29 +40,25 @@ export function SummaryCards({ jobs }: { jobs: JobImpact[] }) {
   ];
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="surface grid grid-cols-2 divide-y divide-border/60 rounded-2xl ring-1 ring-black/[0.04] sm:grid-cols-4 sm:divide-y-0 sm:divide-x dark:ring-white/[0.06]">
       {items.map(({ label, value, Icon, iconClass, hint }) => (
-        <Card key={label} className="border-border/60 shadow-sm">
-          <CardContent className="flex items-start justify-between gap-4 p-5">
-            <div className="space-y-1">
-              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                {label}
-              </p>
-              <p className="text-3xl font-semibold tracking-tight text-foreground">
-                {value}
-              </p>
-              <p className="text-xs text-muted-foreground">{hint}</p>
-            </div>
-            <div
-              className={cn(
-                "flex h-10 w-10 items-center justify-center rounded-lg",
-                iconClass,
-              )}
-            >
-              <Icon className="h-5 w-5" />
-            </div>
-          </CardContent>
-        </Card>
+        <div key={label} className="flex items-center gap-4 p-5">
+          <div
+            className={cn(
+              "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
+              iconClass,
+            )}
+          >
+            <Icon className="h-5 w-5" />
+          </div>
+          <div className="min-w-0 space-y-0.5">
+            <p className="tabular-nums text-2xl font-semibold tracking-tight text-foreground">
+              {value}
+            </p>
+            <p className="truncate text-sm text-foreground/80">{label}</p>
+            <p className="truncate text-xs text-muted-foreground">{hint}</p>
+          </div>
+        </div>
       ))}
     </div>
   );

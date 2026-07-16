@@ -95,28 +95,18 @@ export function ExecutiveInsightPanel({ jobs }: { jobs: JobImpact[] }) {
   ];
 
   return (
-    <Card className="border-border/60 shadow-sm">
+    <Card>
       <CardHeader className="pb-3">
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <Sparkles className="h-4 w-4" />
-          </div>
-          <div>
-            <CardTitle className="text-base">Executive Insights</CardTitle>
-            <p className="text-xs text-muted-foreground">
-              Auto-generated from the current dataset — refreshes as you filter.
-            </p>
-          </div>
-        </div>
+        <CardTitle className="text-base font-semibold">Executive insights</CardTitle>
+        <p className="text-xs text-muted-foreground">
+          Auto-generated from the current dataset — refreshes as you filter.
+        </p>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2">
           {items.map(({ Icon, title, body }) => (
-            <div
-              key={title}
-              className="flex gap-3 rounded-lg border border-border/60 bg-muted/30 p-4"
-            >
-              <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+            <div key={title} className="flex gap-3 border-l-2 border-primary/25 pl-4">
+              <Icon className="mt-0.5 h-4 w-4 shrink-0 text-primary/70" />
               <div className="space-y-1">
                 <p className="text-sm font-medium text-foreground">{title}</p>
                 <p className="text-sm text-muted-foreground">{body}</p>

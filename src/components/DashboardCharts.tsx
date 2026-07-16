@@ -44,7 +44,7 @@ export function DashboardCharts({ jobs }: { jobs: JobImpact[] }) {
 
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-      <Card className="border-border/60 shadow-sm">
+      <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-base">Risk Distribution</CardTitle>
           <p className="text-xs text-muted-foreground">
@@ -85,7 +85,7 @@ export function DashboardCharts({ jobs }: { jobs: JobImpact[] }) {
         </CardContent>
       </Card>
 
-      <Card className="border-border/60 shadow-sm">
+      <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-base">Collar Type vs Replacement Risk</CardTitle>
           <p className="text-xs text-muted-foreground">

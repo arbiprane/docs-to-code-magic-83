@@ -14,6 +14,17 @@ import type { JobImpact } from "@/lib/jobs-data";
 import { RiskBadge } from "./RiskBadge";
 import { Button } from "@/components/ui/button";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   Table,
   TableBody,
   TableCell,
@@ -53,6 +64,7 @@ import {
   Columns3,
   Eye,
   Inbox,
+  Trash2,
 } from "lucide-react";
 
 const columnLabels: Record<string, string> = {
@@ -72,11 +84,15 @@ export function JobsDataTable({
   onView,
   onResetFilters,
   hasFilters,
+  currentUserId,
+  onDelete,
 }: {
   data: JobImpact[];
   onView: (job: JobImpact) => void;
   onResetFilters: () => void;
   hasFilters: boolean;
+  currentUserId?: string;
+  onDelete?: (job: JobImpact) => void;
 }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
@@ -188,7 +204,7 @@ export function JobsDataTable({
         header: () => <div className="text-right">Action</div>,
         enableHiding: false,
         cell: ({ row }) => (
-          <div className="text-right">
+          <div className="flex justify-end gap-2">
             <Button
               variant="outline"
               size="sm"
@@ -198,11 +214,40 @@ export function JobsDataTable({
               <Eye className="mr-1.5 h-3.5 w-3.5" />
               View Analysis
             </Button>
+            {onDelete && row.original.createdBy === currentUserId && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    <span className="sr-only">Delete</span>
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete this job?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This removes "{row.original.jobTitle}" from the tracked
+                      dataset. This can't be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => onDelete(row.original)}>
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
           </div>
         ),
       },
     ],
-    [onView],
+    [onView, onDelete, currentUserId],
   );
 
   const table = useReactTable({
@@ -223,7 +268,7 @@ export function JobsDataTable({
   const totalRows = table.getFilteredRowModel().rows.length;
 
   return (
-    <div className="rounded-lg border border-border/60 bg-card shadow-sm">
+    <div className="surface rounded-2xl ring-1 ring-black/[0.04] dark:ring-white/[0.06]">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b p-3">
         <div className="text-sm text-muted-foreground">
           Showing{" "}

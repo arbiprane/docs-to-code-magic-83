@@ -22,6 +22,7 @@ export type JobImpact = {
   confidenceScore: number;
   validationStatus: ValidationStatus;
   sourceReference: string;
+  createdBy?: string | null;
 };
 
 export const jobs: JobImpact[] = [
